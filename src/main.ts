@@ -24,10 +24,18 @@ async function setup() {
   try {
     // for managed signing key and private caches
     if (awsAccessKeyId !== "" && awsSecretAccessKey !== "") {
-      const aws_credentials = `[default]
+      let aws_credentials;
+      if (endpoint !== "" && endpoint.includes("profile")) {
+        const regex = 'profile=(\\w+)\\s';
+        const profile = endpoint.match(regex)[1];
+        aws_credentials = `[${profile}]
 aws_access_key_id = ${awsAccessKeyId}
 aws_secret_access_key = ${awsSecretAccessKey}`;
-
+      } else {
+        aws_credentials = `[default]
+aws_access_key_id = ${awsAccessKeyId}
+aws_secret_access_key = ${awsSecretAccessKey}`;
+      }
       const aws_path = path.join(os.homedir(), ".aws");
       const aws_credentials_path = path.join(aws_path, "credentials");
 
